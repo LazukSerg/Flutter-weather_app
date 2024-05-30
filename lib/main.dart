@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:weather_app/screen/auth_screen/auth_widget.dart';
 import 'package:weather_app/screen/profile_screen/profile_screen_widget.dart';
+import 'package:weather_app/screen/weather_of_others/others_screen_widget.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -62,35 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> createPages(BuildContext context) {
       final List<Widget> pages = <Widget>[
-            
-        // ListView(children: [
-        //   Container(height: 100.0, color: Color.fromARGB(255, 144, 9, 240),),
-        //   Container(height: 100.0, child: Row(
-        //   children: <Widget> [
-            
-        //                     Expanded(flex: 2, child: Container(color: Colors.amber, child:Column(
-        //                       children: <Widget> [
-        //                         /*Expanded(child: */Container(color: const Color.fromARGB(255, 254, 222, 124), child: Text("data")),
-        //                         /*Expanded(child: */Container(color: Colors.blue, child: Text("123"))]
-                              
-        //                     ))),
-        //                     Expanded(flex: 1, child: Container(color: const Color.fromARGB(255, 128, 197, 254), child: Column(
-        //                         // mainAxisAlignment: MainAxisAlignment.center,
-        //                         // mainAxisSize: MainAxisSize.min,
-        //                         children: [
-        //                           Expanded(child: Container(color: Color.fromARGB(255, 255, 24, 170), child: Text('data.temperature}'))),
-        //                         Expanded(child: Container(color: Color.fromARGB(255, 78, 232, 145), child: Image.network('https://openweathermap.org/img/wn/04n@2x.png')))
-        //                         ],
-        //                       ),))
-        //   ],
-        // ))]),
         Profile(),
         Home(),
-
-        Icon(
-          Icons.people,
-          size: 150,
-        ),
+        Others(),
       ];
       return pages;
   }

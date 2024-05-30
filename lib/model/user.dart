@@ -14,10 +14,4 @@ class User {
          email = json['email'],
          photo = json['photo'];
 
-
-  /// Convert an in-memory representation of a Favorite object to a Map<String, dynamic>
-  // Map<String, dynamic> toJson() => {
-  //       'title': title,
-  //       'artist': artist,
-  //     };
 }

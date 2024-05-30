@@ -67,7 +67,7 @@ class Profile extends ElementaryWidget<IProfileWidgetModel> {
                       maxLines: 1,
                       controller: myController,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.zero,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         border: OutlineInputBorder(),
                         hintText: 'Новое имя',
                       )
@@ -81,33 +81,21 @@ class Profile extends ElementaryWidget<IProfileWidgetModel> {
                       child: const Text("Изменить")
                   ),  
                 ]),
+                SizedBox(
+                  height: 50.0,
+                ),
                 ElevatedButton(
                   
                       onPressed: () {
                         _dialogBuilder();
-                        // FirebaseAuth.instance.signOut();
                       },
                       child: const Text("Выйти из аккаунта")
                 ), 
 
-
-                // ElevatedButton(
-                //       onPressed: () {
-                        
-                //         abc();
-                //       },
-                //       child: const Text("Изменить")
-                //   ), 
               ]
             );
     
   }
-
-  //  Future<void> abc() async {
-  //   SharedPreferences _prefs =  await SharedPreferences.getInstance();
-  //   var store = UserStorage(_prefs);
-  //   store.getAll();
-  // }
 
   Image getImage(String photo) {
     if(photo.startsWith("http")) {

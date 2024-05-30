@@ -1,5 +1,6 @@
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/screen/home_screen/home_screen_widget.dart';
 import 'package:weather_app/screen/home_screen/home_screen_wm.dart';
 import 'package:weather_app/model/weather.dart';
 
@@ -64,6 +65,7 @@ class _WeatherFormState extends State<WeatherForm> {
                   loadingBuilder: (context, data) => const Center(child: CircularProgressIndicator()),
                   errorBuilder: (context, e, data) => const Center(child: Text("Error")),
                   builder: (context, Weather? data) {
+                    Home.currentWeather = data;
                     if (data == null) return const SizedBox();
                     return 
                         Column(children: [

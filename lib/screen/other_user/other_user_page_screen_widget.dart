@@ -6,48 +6,61 @@ import 'dart:ui';
 
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:weather_app/main.dart';
 import 'package:weather_app/model/comment.dart';
+import 'package:weather_app/model/other_user.dart';
 import 'package:weather_app/model/user.dart';
+import 'package:weather_app/screen/other_user/other_user_screen_wm.dart';
 import 'package:weather_app/weather_form.dart';
 import 'package:weather_app/screen/home_screen/home_screen_wm.dart';
 import 'package:weather_app/model/weather.dart';
 
-class Home extends ElementaryWidget<IHomeWidgetModel> {
-  Home({
-    super.key
-  }): super(defaultHomeWidgetModelFactory);
+class OtherUserPage extends ElementaryWidget<IOtherUserWidgetModel> {
+  OtherUserPage({
+    super.key, required this.uid
+    
+  }) : super(defaultOtherUserWidgetModelFactory);
 
+  String uid;
+  static String? glogalUid = null;
   final commentController = TextEditingController();
-  static Weather? currentWeather;
-  User? user;
+  OtherUser? user;
   var viewComments = false;
 
-  void setViewComments(IHomeWidgetModel wm) {
+  void setViewComments(IOtherUserWidgetModel wm, String uid) {
     viewComments = true;
-    wm.viewComments();
+    wm.viewComments(uid);
   }
 
   @override
-  Widget build(IHomeWidgetModel wm) {
-    return ListView(
+  Widget build(IOtherUserWidgetModel wm) {
+    return 
+    Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(getGlobalKey().currentContext!).colorScheme.inversePrimary,
+        ),
+        body: 
+            ListView(
               children: <Widget> [
                 Container(
+                  color: Color.fromARGB(255, 247, 246, 243),
                   height: 180.0, 
                   child: Row(
                     children: [
                       Expanded(flex: 1,
-                        child: EntityStateNotifierBuilder<User>(
+                        child: EntityStateNotifierBuilder<OtherUser>(
                             listenableEntityState: wm.profileListenable,
                             loadingBuilder: (context, data) => const Center(child: CircularProgressIndicator()),
                             errorBuilder: (context, e, data) => const Center(child: Text("Error")),
-                            builder: (context, User? data) {
+                            builder: (context, OtherUser? data) {
                               user = data;
                               
                               if (data == null) return const SizedBox();
-                              setViewComments(wm);
+                              setViewComments(wm, data.id);
                               return Column(
                                 children: <Widget> [
                                   Expanded(flex:3, child: Container(width: double.maxFinite, alignment: Alignment.center, child: getImage(data.photo) )),
@@ -59,37 +72,9 @@ class Home extends ElementaryWidget<IHomeWidgetModel> {
                         )
                       ),
                       
-                      Expanded(flex:2,
-                        child: WeatherForm(wm: wm),
-                      ),
                     ]
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16), 
-                  child:  TextField(
-                      maxLines: 3,
-                      controller: commentController,
-                      decoration: InputDecoration( 
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        border: OutlineInputBorder(),
-                        hintText: 'Новый комментарий',
-                      )
-                    ),
-                ),
-                ElevatedButton(
-                      onPressed: () {
-                          var comment = Comment(
-                            commentController.text,
-                            currentWeather!.point,
-                            '${currentWeather!.temperature > 0 ? '+' : ''}${currentWeather!.temperature}',
-                            currentWeather!.description,
-                            currentWeather!.icon
-                          );
-                          wm.addComment(comment);
-                      },
-                      child: const Text("Опубликовать")
-                ), 
                  
                 EntityStateNotifierBuilder<List<Comment>>(
                         listenableEntityState: wm.commentsListenable,
@@ -129,13 +114,6 @@ class Home extends ElementaryWidget<IHomeWidgetModel> {
                                     Expanded(flex:2, child: Text(element.description))
                                   ],)),
                                   Expanded(flex: 6, child: Text(element.text)),
-                                  IconButton(
-                                    onPressed: () {
-                                      wm.deleteComment(element);
-                                    },
-                                    
-                                    icon: Icon(Icons.delete)
-                                  ),
                                   SizedBox(width: 5)
                                 ],
                               )
@@ -147,10 +125,9 @@ class Home extends ElementaryWidget<IHomeWidgetModel> {
                 ),
               ],
   
-            );
+            )
+    );
           
-    
-    
   }
 
   Image getImage(String photo) {

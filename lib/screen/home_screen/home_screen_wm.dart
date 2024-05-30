@@ -1,6 +1,8 @@
 import "package:elementary/elementary.dart";
 import "package:elementary_helper/elementary_helper.dart";
 import "package:flutter/material.dart";
+import "package:weather_app/model/comment.dart";
+import "package:weather_app/repository/comment_repository.dart";
 import "package:weather_app/screen/home_screen/home_screen_model.dart";
 import "package:weather_app/screen/home_screen/home_screen_widget.dart";
 import "package:weather_app/model/user.dart";
@@ -11,7 +13,11 @@ import "package:weather_app/repository/profile_repository.dart";
 abstract interface class IHomeWidgetModel implements IWidgetModel {
   ValueNotifier<EntityState<User>> get profileListenable;
   ValueNotifier<EntityState<Weather>> get weatherListenable;
+  ValueNotifier<EntityState<List<Comment>>> get commentsListenable;
   setCity(String city);
+  addComment(Comment comment);
+  deleteComment(Comment comment);
+  viewComments();
 }
 
 class HomeWidgetModel extends WidgetModel<Home, IHomeModel> implements IHomeWidgetModel {
@@ -19,6 +25,7 @@ class HomeWidgetModel extends WidgetModel<Home, IHomeModel> implements IHomeWidg
 
   final _profileEntity = EntityStateNotifier<User>();
   final _weatherEntity = EntityStateNotifier<Weather>();
+  final _commentsEntity = EntityStateNotifier<List<Comment>>();
   String? _city = null;
 
   @override
@@ -28,16 +35,37 @@ class HomeWidgetModel extends WidgetModel<Home, IHomeModel> implements IHomeWidg
   ValueNotifier<EntityState<Weather>> get weatherListenable => _weatherEntity;
 
   @override
+  ValueNotifier<EntityState<List<Comment>>> get commentsListenable => _commentsEntity;
+
+  @override
   setCity(String city){
     _city = city;
     _loadWeather();
   } 
+
+  @override
+  addComment(Comment comment) {
+    model.addComment(comment);
+    _loadMyComments();
+  }
+
+  @override
+  deleteComment(Comment comment) {
+    model.deleteComment(comment);
+    _loadMyComments();
+  }
+
+  @override
+  void viewComments() {
+    _loadMyComments();
+  }
 
 
   @override
   void initWidgetModel() {
     _loadProfile();
     _loadWeather();
+    _loadMyComments();
     super.initWidgetModel();
   }
 
@@ -53,8 +81,14 @@ class HomeWidgetModel extends WidgetModel<Home, IHomeModel> implements IHomeWidg
     _weatherEntity.content(weather);
   }
 
+  Future<void> _loadMyComments() async {
+    _commentsEntity.loading();
+    final comments = await model.getMyComments();
+    _commentsEntity.content(comments);
+  }
+
 }
 
 HomeWidgetModel defaultHomeWidgetModelFactory(BuildContext context) {
-  return HomeWidgetModel(HomeModel(ProfileRepository()));
+  return HomeWidgetModel(HomeModel(ProfileRepository(), CommentRepository()));
 }
